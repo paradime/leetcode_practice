@@ -10,8 +10,29 @@ class Interval:
     print("[" + str(self.start) + ", " + str(self.end) + "]", end='')
 
 
-# number of merge intervals * number of intervals (O(N*M) == O(n**2))
+# sorting + 1 iteration = O(nlogn) + O(n) = O(nlogn)
 def merge(intervals):
+  intervals = sorted(intervals, key=lambda x: x.start)
+  merged = [intervals[0]]
+  i = 0
+  while i < len(merged):
+    a = merged[i]
+    j = 0
+    while j < len(intervals):
+      b = intervals[j]
+      if a.start <= b.start and b.start <= a.end:
+        merged[i] = mergeIntervals(a,b)
+        a= merged[i]
+        intervals.pop(j)
+      else:
+        merged.append(b)
+        intervals.pop(j)
+        break
+    i += 1
+  return merged
+
+# number of merge intervals * number of intervals (O(N*M) == O(n**2))
+def merge_mine(intervals):
   tempIntervals = list(intervals)
   merged = []
   i = 0
@@ -43,7 +64,7 @@ def mergeIntervals(interval1, interval2):
 
 def main():
   print("Merged intervals: ", end='')
-  for i in merge([Interval(1, 4), Interval(2, 5), Interval(7, 9)]):
+  for i in merge([Interval(7,9), Interval(2, 5), Interval(1,4)]):
     i.print_interval()
   print()
 
@@ -54,6 +75,10 @@ def main():
 
   print("Merged intervals: ", end='')
   for i in merge([Interval(1, 4), Interval(2, 6), Interval(3, 5)]):
+    i.print_interval()
+  print()
+
+  for i in merge([Interval(7,9)]):
     i.print_interval()
   print()
 
